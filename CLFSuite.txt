@@ -1,0 +1,106 @@
+*** Settings ***
+Suite Setup       Open browser and maximize window
+Suite Teardown    Close browser and quit
+Test Setup        CLFRLogin
+Test Teardown     User logout
+Library           Selenium2Library
+Variables         sensitiveVars.py
+
+*** Variables ***
+${LoginUserName Id}    id=j_username    #Login username field
+${LoginPassword Id}    id=j_password    #Password Username Field
+${LoginButton Id}    xpath=//button[@name='submit']    #Login Button
+${HomeButton Id}    xpath=//span[@class='ubIconHome sprite']
+${success}        xpath=//div[@class='success']
+${LogoutButton}    xpath=//a[contains(text(),"Logout")]
+${Browser}        firefox
+${website}        http://192.168.0.20:8080/admin/public/login
+${logoutURL}      http://192.168.0.20:8080/admin/resources/j_spring_security_logout
+${newSurveyBtn}    xpath=//*[@id="sidemenu"]/li[2]/a[contains(text(),"Add new Survey")]
+${departmentId}    name=department
+${nameId}         name=name
+${themeId}        name=surveyTheme
+${descriptionId}    xpath=//*[@id="tinymce"]
+${saveBtn}        xpath=//input[@id="proceed"]
+${newPageBtn}     css=a.formee right fancyboxLink fancybox.iframe
+${surveyTitleId}    xpath=//input[@name="title"]
+${surveyInstructionsId}    xpath=//textarea[@name="instructions"]
+${surveyNewPageBtn}    xpath=//*[@id="sidemenu"]/li[2]/a[contains(text(),"Add new Page")]
+${fancyboxFrame}    xpath=//iframe[@class='fancybox-iframe']
+${questionType}    identifier=type
+${newQuestionBtn}    //i[@class="icon-plus icon-1x"]/..    # xpath=//a[@href='/admin/settings/questions/80?create'][contains(text(),"questions")] link=add question
+
+*** Test Cases ***
+LoginCFL
+    [Tags]    CLRF    iTexico
+    [Setup]    CLFRLogin
+    Page should contain element    ${success}
+    [Teardown]    User logout
+
+SimpleSurvey
+    [Tags]    CLRF    iTexico    Current
+    [Setup]    CLFRLogin
+    newSurvey
+    newQuestYN
+    [Teardown]    User logout
+
+*** Keywords ***
+Open browser and maximize window
+    Open Browser    ${website}    ${Browser}
+    Maximize browser window
+
+Close browser and quit
+    Close Browser
+
+User logout
+    Go to    ${logoutURL}
+    Wait Until Element Is Visible    ${LoginButton Id}
+    Page should contain element    ${LoginButton Id}
+
+CLFRLogin
+    [Tags]    CLFR    iTexico
+    Wait Until Element Is Visible    ${LoginButton Id}    10s
+    Input Text    ${LoginUserName Id}    ${adminUser}
+    Input Password    ${LoginPassword Id}    ${Password}
+    Click Element    ${LoginButton Id}
+
+newQuestYN
+    sleep    3
+    #Wait for the page to load completely
+    Unselect frame
+    Click element    ${newQuestionBtn}
+    Wait until page contains element    ${fancyboxFrame}    5
+    Select frame    ${fancyboxFrame}
+    #Waits for the fancybox to load and selects it
+    Select from list    ${questionType}    BR
+    Select frame    //iframe[@id="_questionText_id_ifr"]
+    Input Text    ${descriptionId}    YES - NO Automated Question
+    #Selects the iframe inside the fancybox that contains the textfield of question description and writes
+    Unselect Frame
+    Select frame    ${fancyboxFrame}
+    #Return to the fancybox level
+    Click element    ${saveBtn}
+    Unselect Frame
+    #This last unselect is to make sure no iframe is selected maybe it's not even necessary but you never know
+
+newSurvey
+    Click element    ${newSurveyBtn}
+    Select From List    ${departmentId}    1
+    ${random}    Evaluate    random.randint(0, sys.maxint)    modules=random    modules=random, sys
+    ${surveytitle}    Catenate    SEPARATOR=-    ucoria Automation Test -    ${random}
+    Input text    ${nameId}    ${surveytitle}
+    Select From List    ${themeId}    CELESTIAL_BLUE
+    Wait until element is visible    ${saveBtn}    7
+    Click element    ${saveBtn}
+    Wait until element is visible    ${surveyNewPageBtn}
+    Click element    ${surveyNewPageBtn}
+    Unselect frame
+    Wait until page contains element    ${fancyboxFrame}    5
+    Select frame    ${fancyboxFrame}
+    ${pageTitle}    Catenate    SEPARATOR=-    Title ID Automated    ${random}
+    Wait until element is visible    ${surveyTitleId}    5    Timeout no vi el titulo
+    Input text    ${surveyTitleId}    ${pageTitle}
+    Input text    ${surveyInstructionsId}    Automated instructions 1234
+    Click element    ${saveBtn}
+
+    #Run: robot --include <tags> <.txt file>
