@@ -32,16 +32,18 @@ ${newQuestionBtn}    //i[@class="icon-plus icon-1x"]/..    # xpath=//a[@href='/a
 
 *** Test Cases ***
 LoginCFL
-    [Tags]    CLRF    iTexico
+    [Tags]    LoginTest
     [Setup]    CLFRLogin
     Page should contain element    ${success}
     [Teardown]    User logout
 
 SimpleSurvey
-    [Tags]    CLRF    iTexico    Current
+    [Tags]    Current
     [Setup]    CLFRLogin
     newSurvey
+    newSurveyPage
     newQuestYN
+    newQuestShortText
     [Teardown]    User logout
 
 *** Keywords ***
@@ -64,6 +66,28 @@ CLFRLogin
     Input Password    ${LoginPassword Id}    ${Password}
     Click Element    ${LoginButton Id}
 
+newSurvey
+    Click element    ${newSurveyBtn}
+    Select From List    ${departmentId}    1
+    ${random}    Evaluate    random.randint(0, sys.maxint)    modules=random    modules=random, sys
+    ${surveytitle}    Catenate    SEPARATOR=-    ucoria Automation Test -    ${random}
+    Input text    ${nameId}    ${surveytitle}
+    Select From List    ${themeId}    CELESTIAL_BLUE
+    Wait until element is visible    ${saveBtn}    7
+    Click element    ${saveBtn}
+
+
+newSurveyPage
+    Wait until element is visible    ${surveyNewPageBtn}
+    Click element    ${surveyNewPageBtn}
+    Unselect frame
+    Wait until page contains element    ${fancyboxFrame}    5
+    Select frame    ${fancyboxFrame}
+    Wait until element is visible    ${surveyTitleId}    5    Timeout no vi el titulo
+    Input text    ${surveyTitleId}    Automated Page
+    Input text    ${surveyInstructionsId}    Automated instructions 1234
+    Click element    ${saveBtn}
+
 newQuestYN
     sleep    3
     #Wait for the page to load completely
@@ -83,24 +107,26 @@ newQuestYN
     Unselect Frame
     #This last unselect is to make sure no iframe is selected maybe it's not even necessary but you never know
 
-newSurvey
-    Click element    ${newSurveyBtn}
-    Select From List    ${departmentId}    1
-    ${random}    Evaluate    random.randint(0, sys.maxint)    modules=random    modules=random, sys
-    ${surveytitle}    Catenate    SEPARATOR=-    ucoria Automation Test -    ${random}
-    Input text    ${nameId}    ${surveytitle}
-    Select From List    ${themeId}    CELESTIAL_BLUE
-    Wait until element is visible    ${saveBtn}    7
-    Click element    ${saveBtn}
-    Wait until element is visible    ${surveyNewPageBtn}
-    Click element    ${surveyNewPageBtn}
+newQuestShortText
+    BuiltIn.Sleep    3    reason=Aguantala poquito
+    #Wait for the page to load completely
     Unselect frame
+    Click element    ${newQuestionBtn}
     Wait until page contains element    ${fancyboxFrame}    5
     Select frame    ${fancyboxFrame}
-    ${pageTitle}    Catenate    SEPARATOR=-    Title ID Automated    ${random}
-    Wait until element is visible    ${surveyTitleId}    5    Timeout no vi el titulo
-    Input text    ${surveyTitleId}    ${pageTitle}
-    Input text    ${surveyInstructionsId}    Automated instructions 1234
+    Sleep    3
+    #Waits for the fancybox to load and selects it
+    Select from list    ${questionType}    ST
+    Select frame    //iframe[@id="_questionText_id_ifr"]
+    Input Text    ${descriptionId}    Short Text Automated Question
+    #Selects the iframe inside the fancybox that contains the textfield of question description and writes
+    Unselect Frame
+    Select frame    ${fancyboxFrame}
+    #Return to the fancybox level
     Click element    ${saveBtn}
+    Unselect Frame
+    #This last unselect is to make sure no iframe is selected maybe it's not even necessary but you never know
+
+
 
     #Run: robot --include <tags> <.txt file>
