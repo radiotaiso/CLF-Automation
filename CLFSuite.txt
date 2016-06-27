@@ -33,7 +33,8 @@ ${surveyInstructionsId}    xpath=//textarea[@name="instructions"]
 # ${surveyNewPageBtn}    xpath=//*[@id="sidemenu"]/li[2]/a[contains(text(),"Add new Page")]
 # NEW QUESTIONS VARS
 ${questionType}    identifier=type
-${newQuestionBtn}    //i[@class="icon-plus icon-1x"]/..
+${newQuestionBtn}    xpath=//div[@style='height:60px;margin:0px;']//*[@id='addButton']
+#//i[@class="icon-plus icon-1x"]/..old new question
 # FANCYBOXFRAME VARS
 ${fancyboxFrame}    xpath=//iframe[@class='fancybox-iframe']
 
@@ -41,7 +42,6 @@ ${fancyboxFrame}    xpath=//iframe[@class='fancybox-iframe']
 LoginCFL
     [Tags]    LoginTest
     [Setup]    CLFRLogin
-
     Page should contain element    ${success}
     [Teardown]    User logout
 
@@ -50,7 +50,7 @@ SimpleSurvey
     [Setup]    CLFRLogin
     newSurvey
     newSurveyPage
-    #newQuestYN
+    newQuestYN
     #newQuestShortText
     [Teardown]    User logout
 
