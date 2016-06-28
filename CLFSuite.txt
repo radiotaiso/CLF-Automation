@@ -18,7 +18,7 @@ ${Browser}        firefox
 ${website}        http://192.168.0.20:8080/admin/public/login
 ${logoutURL}      http://192.168.0.20:8080/admin/resources/j_spring_security_logout
 # NEW SURVEY VARS
-${newSurveyBtn}    xpath=//*[@id="addButton"][contains(text(),"Add Survey")]
+${newSurveyBtn}    xpath=.//*[@id='addButton'][contains(text(),'New Survey')]
 ${departmentId}    name=department
 ${nameId}         name=name
 ${facilityId}       id=selector_hierarchy_l2
@@ -34,6 +34,7 @@ ${surveyInstructionsId}    xpath=//textarea[@name="instructions"]
 # NEW QUESTIONS VARS
 ${questionType}    identifier=type
 ${newQuestionBtn}    xpath=//div[@style='height:60px;margin:0px;']//*[@id='addButton']
+${updateOptionsBtn}    //div[@class="questionLinks"]//a[contains(text(),"update options")]
 #//i[@class="icon-plus icon-1x"]/..old new question
 # FANCYBOXFRAME VARS
 ${fancyboxFrame}    xpath=//iframe[@class='fancybox-iframe']
@@ -50,8 +51,9 @@ SimpleSurvey
     [Setup]    CLFRLogin
     newSurvey
     newSurveyPage
-    newQuestYN
-    #newQuestShortText
+    # newQuestYN
+    # newQuestShortText
+    newQuestMultiCheckbox
     [Teardown]    User logout
 
 *** Keywords ***
@@ -75,6 +77,7 @@ CLFRLogin
     Click Element    ${LoginButton Id}
 
 newSurvey
+    Wait Until Element Is Visible    ${newSurveyBtn}    timeout=5
     Click element    ${newSurveyBtn}
     ${random}    Evaluate    random.randint(0, sys.maxint)    modules=random    modules=random, sys
     ${surveytitle}    Catenate    SEPARATOR=-    ucoria Automation Test -    ${random}
@@ -145,17 +148,22 @@ newQuestMultiCheckbox
     Select frame    ${fancyboxFrame}
     Sleep    3
     #Waits for the fancybox to load and selects it
-    Select from list    ${questionType}    ST
+    Select from list    ${questionType}    MC
     Select frame    //iframe[@id="_questionText_id_ifr"]
-    Input Text    ${descriptionId}    Short Text Automated Question
+    Input Text    ${descriptionId}    Multiple checkbox Automated Question
     #Selects the iframe inside the fancybox that contains the textfield of question description and writes
     Unselect Frame
     Select frame    ${fancyboxFrame}
     #Return to the fancybox level
     Click element    ${saveBtn}
+    Sleep    3    reason=not sure why
     Unselect Frame
     #This last unselect is to make sure no iframe is selected maybe it's not even necessary but you never know
+    Click Element    ${updateOptionsBtn}
+    Wait until page contains element    ${fancyboxFrame}    5
+    Select frame    ${fancyboxFrame}
+    @{textFields}    Get Webelements    //tr//input[@maxlength=8]
+    Log    @{textFields}    level=INFO    html=False    console=True    repr=False
 
     #Run: robot --include <tags> <.txt file>
-    #TEst Git WOOt!
-    # De reversa
+    # robot --include Current CLFSuite.txt
