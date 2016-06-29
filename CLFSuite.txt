@@ -89,6 +89,8 @@ newSurvey
     Select From List    ${themeId}    CELESTIAL_BLUE
     Wait until element is visible    ${saveBtn}    7
     Click element    ${saveBtn}
+    Page Should Contain    ${surveytitle}    loglevel=INFO
+    Page Should Contain    Celestial Blue    loglevel=INFO
 
 newSurveyPage
     Wait until element is visible    ${NewPageBtn}
