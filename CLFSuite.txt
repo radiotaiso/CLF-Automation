@@ -18,7 +18,7 @@ ${Browser}        firefox
 ${website}        http://192.168.0.20:8080/admin/public/login
 ${logoutURL}      http://192.168.0.20:8080/admin/resources/j_spring_security_logout
 # NEW SURVEY VARS
-${newSurveyBtn}    xpath=.//*[@id='addButton'][contains(text(),'New Survey')]
+${newSurveyBtn}    xpath=//div[@style='position:absolute;right:220px;']//*[@id='addButton']
 ${departmentId}    name=department
 ${nameId}         name=name
 ${facilityId}       id=selector_hierarchy_l2
@@ -77,8 +77,9 @@ CLFRLogin
     Click Element    ${LoginButton Id}
 
 newSurvey
-    Wait Until Element Is Visible    ${newSurveyBtn}    timeout=5
+    Wait Until Element Is Visible    ${newSurveyBtn}    timeout=10
     Click element    ${newSurveyBtn}
+    Sleep    5    reason=None
     ${random}    Evaluate    random.randint(0, sys.maxint)    modules=random    modules=random, sys
     ${surveytitle}    Catenate    SEPARATOR=-    ucoria Automation Test -    ${random}
     Input text    ${nameId}    ${surveytitle}
@@ -160,10 +161,22 @@ newQuestMultiCheckbox
     Unselect Frame
     #This last unselect is to make sure no iframe is selected maybe it's not even necessary but you never know
     Click Element    ${updateOptionsBtn}
+    Sleep    3    need to see the Textfield
     Wait until page contains element    ${fancyboxFrame}    5
     Select frame    ${fancyboxFrame}
-    @{textFields}    Get Webelements    //tr//input[@maxlength=8]
-    Log    @{textFields}    level=INFO    html=False    console=True    repr=False
+    @{textValue}    Get Webelements    //tr//input[@maxlength=8]
+    @{textFields}    Get Webelements    //tr//input[@maxlength=250]
+    ${count}=    Set Variable    1
+    :FOR     ${value}    IN   @{textValue}
+    \    Input Text    ${value}    ${count}-Value
+    \    ${count}=    Evaluate    ${count}+1
+    ${count}=    Set Variable    1
+    :FOR     ${field}    IN   @{textFields}
+    \    Input Text    ${field}    ${count}-Field
+    \    ${count}=    Evaluate    ${count}+1
+    Click element    ${saveBtn}
 
+
+    # Log    @{textFields}    level=INFO    html=False    console=True    repr=False
     #Run: robot --include <tags> <.txt file>
     # robot --include Current CLFSuite.txt
