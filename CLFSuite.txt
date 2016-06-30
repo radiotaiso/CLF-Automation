@@ -51,8 +51,8 @@ SimpleSurvey
     [Setup]    CLFRLogin
     newSurvey
     newSurveyPage
-    # newQuestYN
-    # newQuestShortText
+    newQuestYN
+    newQuestShortText
     newQuestMultiCheckbox
     [Teardown]    User logout
 
