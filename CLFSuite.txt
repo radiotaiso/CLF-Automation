@@ -30,12 +30,10 @@ ${newPageBtn}     xpath=//div[@id='emptyPages']//*[@id='addButton']
 #//a[@class="fancyboxLink fancybox.iframe"]
 ${surveyTitleId}    xpath=//input[@name="title"]
 ${surveyInstructionsId}    xpath=//textarea[@name="instructions"]
-# ${surveyNewPageBtn}    xpath=//*[@id="sidemenu"]/li[2]/a[contains(text(),"Add new Page")]
 # NEW QUESTIONS VARS
 ${questionType}    identifier=type
 ${newQuestionBtn}    xpath=//div[@style='height:60px;margin:0px;']//*[@id='addButton']
 ${updateOptionsBtn}    //div[@class="questionLinks"]//a[contains(text(),"update options")]
-#//i[@class="icon-plus icon-1x"]/..old new question
 # FANCYBOXFRAME VARS
 ${fancyboxFrame}    xpath=//iframe[@class='fancybox-iframe']
 
@@ -83,9 +81,9 @@ newSurvey
     ${random}    Evaluate    random.randint(0, sys.maxint)    modules=random    modules=random, sys
     ${surveytitle}    Catenate    SEPARATOR=-    ucoria Automation Test -    ${random}
     Input text    ${nameId}    ${surveytitle}
+    Log    ${surveytitle}    level=INFO    html=False    console=True    repr=False
     Log Many    survey title:     ${surveytitle}
     Select From List    ${facilityId}    6
-    # Select From List    ${departmentId}    21
     Select From List    ${themeId}    CELESTIAL_BLUE
     Wait until element is visible    ${saveBtn}    7
     Click element    ${saveBtn}
@@ -123,7 +121,7 @@ newQuestYN
     #This last unselect is to make sure no iframe is selected maybe it's not even necessary but you never know
 
 newQuestShortText
-    Sleep    3    reason=Aguantala poquito
+    Sleep    3
     #Wait for the page to load completely
     Unselect frame
     Click element    ${newQuestionBtn}
@@ -143,7 +141,7 @@ newQuestShortText
     #This last unselect is to make sure no iframe is selected maybe it's not even necessary but you never know
 
 newQuestMultiCheckbox
-    Sleep    3    reason=Aguantala poquito
+    Sleep    3
     #Wait for the page to load completely
     Unselect frame
     Click element    ${newQuestionBtn}
@@ -170,15 +168,12 @@ newQuestMultiCheckbox
     @{textFields}    Get Webelements    //tr//input[@maxlength=250]
     ${count}=    Set Variable    1
     :FOR     ${value}    IN   @{textValue}
-    \    Input Text    ${value}    ${count}-Value
+    \    Input Text    ${value}    ${count}
     \    ${count}=    Evaluate    ${count}+1
     ${count}=    Set Variable    1
     :FOR     ${field}    IN   @{textFields}
     \    Input Text    ${field}    ${count}-Field
     \    ${count}=    Evaluate    ${count}+1
     Click element    ${saveBtn}
-
-
-    # Log    @{textFields}    level=INFO    html=False    console=True    repr=False
-    #Run: robot --include <tags> <.txt file>
+    Sleep    5
     # robot --include Current CLFSuite.txt
