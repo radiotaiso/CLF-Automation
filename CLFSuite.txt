@@ -27,7 +27,6 @@ ${descriptionId}    xpath=//*[@id="tinymce"]
 ${saveBtn}        xpath=//input[@id="proceed"]
 # NEW PAGE VARS
 ${newPageBtn}     xpath=//div[@id='emptyPages']//*[@id='addButton']
-#//a[@class="fancyboxLink fancybox.iframe"]
 ${surveyTitleId}    xpath=//input[@name="title"]
 ${surveyInstructionsId}    xpath=//textarea[@name="instructions"]
 # NEW QUESTIONS VARS
