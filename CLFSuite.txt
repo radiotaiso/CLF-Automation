@@ -175,4 +175,5 @@ newQuestMultiCheckbox
     \    ${count}=    Evaluate    ${count}+1
     Click element    ${saveBtn}
     Sleep    5
+
     # robot --include Current CLFSuite.txt
