@@ -14,7 +14,7 @@ ${LoginButton Id}    xpath=//button[@name='submit']    #Login Button
 ${HomeButton Id}    xpath=//span[@class='ubIconHome sprite']
 ${success}        xpath=//div[@class='success']
 ${LogoutButton}    xpath=//a[contains(text(),"Logout")]
-${Browser}        firefox
+${Browser}        phantomjs
 ${website}        http://192.168.0.20:8080/admin/public/login
 ${logoutURL}      http://192.168.0.20:8080/admin/resources/j_spring_security_logout
 # NEW SURVEY VARS
@@ -176,4 +176,7 @@ newQuestMultiCheckbox
     Click element    ${saveBtn}
     Sleep    5
 
+    # Windows
     # robot --include Current CLFSuite.txt
+    # Linux
+    # python -m robot --include Current CLFSuite.txt
